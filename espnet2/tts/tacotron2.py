@@ -367,6 +367,7 @@ class Tacotron2(AbsTTS):
         self,
         text: torch.Tensor,
         speech: torch.Tensor = None,
+        style: torch.Tensor = None,
         spembs: torch.Tensor = None,
         threshold: float = 0.5,
         minlenratio: float = 0.0,
@@ -417,7 +418,9 @@ class Tacotron2(AbsTTS):
 
         # inference
         h = self.enc.inference(x)
-        if self.use_gst:
+        if style is not None:
+            h = h + style
+        if style is None and self.use_gst:
             style_emb = self.gst(y.unsqueeze(0))
             h = h + style_emb
         if self.spk_embed_dim is not None:
